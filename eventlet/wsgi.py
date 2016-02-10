@@ -567,6 +567,8 @@ class HttpProtocol(BaseHTTPServer.BaseHTTPRequestHandler):
         env['PATH_INFO'] = urllib.parse.unquote(pq[0])
         if len(pq) > 1:
             env['QUERY_STRING'] = pq[1]
+        else:
+            env['QUERY_STRING'] = ''
 
         ct = self.headers.get('content-type')
         if ct is None:
