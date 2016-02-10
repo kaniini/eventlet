@@ -289,6 +289,11 @@ class HttpProtocol(BaseHTTPServer.BaseHTTPRequestHandler):
     capitalize_response_headers = True
 
     def setup(self):
+        # if we bind to a UNIX socket, then we have no client_address.
+        # since a lot of code expects one, we fake it.
+        if not self.client_address:
+            self.client_address = ('127.0.0.1', 0)
+
         # overriding SocketServer.setup to correctly handle SSL.Connection objects
         conn = self.connection = self.request
         try:
