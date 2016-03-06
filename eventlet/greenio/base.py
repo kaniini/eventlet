@@ -62,11 +62,14 @@ if sys.platform[:3] == "win":
     # winsock sometimes throws ENOTCONN
     SOCKET_BLOCKING = set((errno.EAGAIN, errno.EWOULDBLOCK,))
     SOCKET_CLOSED = set((errno.ECONNRESET, errno.ENOTCONN, errno.ESHUTDOWN))
-else:
+elif 'linux' in sys.platform or 'darwin' in sys.platform:
     # oddly, on linux/darwin, an unconnected socket is expected to block,
     # so we treat ENOTCONN the same as EWOULDBLOCK
     SOCKET_BLOCKING = set((errno.EAGAIN, errno.EWOULDBLOCK, errno.ENOTCONN))
     SOCKET_CLOSED = set((errno.ECONNRESET, errno.ESHUTDOWN, errno.EPIPE))
+else:
+    SOCKET_BLOCKING = set((errno.EAGAIN, errno.EWOULDBLOCK))
+    SOCKET_CLOSED = set((errno.ECONNRESET, errno.ESHUTDOWN, errno.EPIPE, errno.ENOTCONN))
 
 
 def set_nonblocking(fd):
