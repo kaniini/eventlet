@@ -1,17 +1,17 @@
 import errno
 import os
-from socket import socket as _original_socket
 import socket
 import sys
 import time
 import warnings
 
-from eventlet.support import get_errno, six
+import eventlet
 from eventlet.hubs import trampoline, notify_opened, IOClosed
+from eventlet.support import get_errno, six
 
 __all__ = [
     'GreenSocket', '_GLOBAL_DEFAULT_TIMEOUT', 'set_nonblocking',
-    'SOCKET_CLOSED', 'CONNECT_ERR', 'CONNECT_SUCCESS',
+    'SOCKET_BLOCKING', 'SOCKET_CLOSED', 'CONNECT_ERR', 'CONNECT_SUCCESS',
     'shutdown_safe', 'SSL',
 ]
 
@@ -23,6 +23,8 @@ if sys.platform[:3] == "win":
 
 if six.PY2:
     _python2_fileobject = socket._fileobject
+
+_original_socket = eventlet.patcher.original('socket').socket
 
 
 def socket_connect(descriptor, address):
